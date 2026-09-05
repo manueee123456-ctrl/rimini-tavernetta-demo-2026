@@ -1,0 +1,6 @@
+const SUPABASE_URL='https://hmctubycesgwbpyeqjga.supabase.co';
+const SUPABASE_KEY='sb_publishable_U_ooeRqmKCkwmLjxwuOKgw_gRw8SlWl';
+const form=document.querySelector('form');
+const date=form.elements.booking_date;
+date.min=new Date().toISOString().slice(0,10);
+form.addEventListener('submit',async(event)=>{event.preventDefault();const status=form.querySelector('.form-status');if(form.elements.website.value)return;const button=form.querySelector('button');button.disabled=true;status.textContent='Invio della richiesta…';const data=Object.fromEntries(new FormData(form));delete data.website;data.restaurant_slug=form.dataset.restaurant;data.party_size=Number(data.party_size);try{const response=await fetch(`${SUPABASE_URL}/rest/v1/restaurant_demo_reservations`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)});if(!response.ok)throw new Error();form.reset();date.min=new Date().toISOString().slice(0,10);status.textContent='Richiesta inviata. Il ristorante la ricontatterà per conferma.'}catch{status.textContent='Non è stato possibile inviare la richiesta. Riprovi o contatti il ristorante per telefono.'}finally{button.disabled=false}});
